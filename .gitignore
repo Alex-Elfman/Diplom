@@ -1,0 +1,10 @@
+/.helm/
+/.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+install.sh
+.terraform.lock.hcl
+.gitignore.swp
+/kubespray/*/
+!/kubespray/inventory/k8s-dev-cluster/
+

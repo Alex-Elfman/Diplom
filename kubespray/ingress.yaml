@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Ingress
+metadata:
+  name: kube-state-ingress
+  namespace: monitoring
+  labels:
+    name: kube-state-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: grafana.selectel.site
+      http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: stable-grafana
+            port:
+                                                                                                            number: 80
