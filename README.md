@@ -1708,6 +1708,10 @@ service/stable-grafana edited
 ```
 </details>
 
+Доступы:
+[prometheus](http://158.160.124.94:31111/graph?g0.expr=&g0.tab=1&g0.display_mode=lines&g0.show_exemplars=0&g0.range_input=1h)
+[grafana](http://158.160.124.94:31112/login)
+
 3. Дашборды в grafana отображающие состояние Kubernetes кластера.
 
 Prometheus
