@@ -1762,7 +1762,7 @@ Password: prom-operator
 ![img_18.png](img_18.png)
 
 Создал манифест для автосборки. 
-p.s.: Путем проб и ошибок в разной комбинации пришел к использованию werf. Под капотом абсолютно все действия, включая создание namespaces и выкладку образов.
+p.s.: Путем проб и ошибок в разной комбинации пришел к использованию werf. Под капотом абсолютно все действия, включая создание namespaces и сборку образов.
 
 <details>
 <summary> Манифест .github/workflows/docker-publish.yml </summary>
@@ -1796,6 +1796,39 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4' # optional
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          version: v0.10.0
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}
+          tags: ${{ github.ref_name }}
+          labels: latest
+          
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: . 
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Converge
         uses: werf/actions/converge@v2
@@ -1895,7 +1928,7 @@ To github.com:Alex-Elfman/MyApp.git
 `echo "содержимое файла ~/.kube/config" | base64` получится набор из букв, цифр и символов. Полученное значение добавляем в виде секрета в настройки репозитория в виде переменной KUBE_CONFIG_BASE64_DATA
 
 
-Добавляем в манифест сборки блок
+Добавляем в манифест сборки блок (выше манифест приведен уже с этой задачей)
 
 ```commandline
       - name: Deploy
